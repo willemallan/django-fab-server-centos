@@ -25,12 +25,12 @@ Reiniciar nginx e supervisor
 
 Criar uma nova conta no servidor:
 
-    fab novaconta
+    fab newaccount
 
 
 Exclui uma conta no servidor:
 
-    fab delconta
+    fab delaccount
 
 
 <h3>Clonar projeto no servidor</h3>
