@@ -1,4 +1,4 @@
-django-fab-server
+django-fab-server-centos
 =================
 
 Como funciona?
