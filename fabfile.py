@@ -6,6 +6,14 @@ from fabric.contrib.files import upload_template
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 
+
+# ----------------------------------------------------------------
+# DESEJA INSTALAR ?
+# ----------------------------------------------------------------
+
+install_mysql = True
+install_postgresql = False
+
 # ----------------------------------------------------------------
 # ALTERAR CONFIGURAÇÕES BASEADAS NO SEUS SERVIDOR E MAQUINA LOCAL
 # ----------------------------------------------------------------
@@ -34,7 +42,7 @@ env.language = ''
 env.mysql_password = ''
 
 # porta para rodar o projeto
-env.port = ''
+env.host_port = ''
 
 # diretório do sites-enable do nginx
 env.nginx_sites_enable_path = '/etc/nginx/sites-enabled'
@@ -86,6 +94,10 @@ def newserver():
     python()
     nginx()
     uwsgi()
+    if install_mysql:
+        mysql()
+    if install_postgresql:
+        postgresql()
 
     write_file('nginx_server.conf', '/etc/nginx/nginx.conf')
 
@@ -99,7 +111,27 @@ def newserver():
 
 def build():
     """Instala dependencias no servidor"""
-    sudo('yum -y install wget')
+    """Instala dependencias no servidor"""
+    sudo('yum -y install wget git')
+
+def mysql():
+    """Instala e configura MySQL"""
+    log('Instala e configura MySQL')
+    sudo('yum -y install mysql-server mysql php-mysql')
+    sudo('chkconfig --levels 235 mysqld on')
+    sudo('service mysqld start')
+    if not env.mysql_password:
+        env.mysql_password = raw_input('Digite a senha do ROOT do MySQL: ')
+    sudo("echo \"SET PASSWORD FOR 'root'@'localhost' = PASSWORD('{0}')\" | mysql -u root".format(env.mysql_password))
+    sudo("echo \"SET PASSWORD FOR 'root'@'localhost.localdomain' = PASSWORD('{0}')\" | mysql -u root".format(env.mysql_password))
+    sudo("echo \"SET PASSWORD FOR 'root'@'127.0.0.1' = PASSWORD('{0}')\" | mysql -u root".format(env.mysql_password))
+    write_file('my.cnf', '/etc/my.cnf')
+    mysql_restart()
+
+def postgresql():
+    """Instala e configura Postgresql"""
+    log('Instala e configura Postgresql')
+    sudo('yum -y install postgresql')
 
 def python():
     """Instalando e configurando python"""
@@ -154,8 +186,8 @@ def newaccount():
         env.domain = raw_input('Digite o domínio do site (sem www): ')
     if not env.language:
         env.language = raw_input('Linguagens disponíveis\n\n1) PYTHON\n2) PHP\n\nEscolha a linguagem [1/2]: ')
-        if not env.port and int(env.language) == 1:
-            env.port = raw_input('Digite o número da porta: ')
+        if not env.host_port and int(env.language) == 1:
+            env.host_port = raw_input('Digite o número da porta: ')
     if not env.mysql_password:
         env.mysql_password = raw_input('Digite a senha do ROOT do MySQL: ')
 
@@ -166,8 +198,9 @@ def newaccount():
     # criar diretório de logs
     with cd('/home/{0}/'.format(env.account)):
         run('mkdir logs')
-        run('touch access.log')
-        run('touch error.log')
+        with cd('/home/{0}/logs'.format(env.account)):
+            run('touch access.log')
+            run('touch error.log')
 
         if int(env.language) == 1:
             run('virtualenv env --no-site-packages')
@@ -189,7 +222,7 @@ def newaccount():
 
     # log para salvar no docs
     log('Anotar dados da conta')
-    print '\n{0} \nUSUÁRIO senha: {1} \nBANCO senha: {2}'.format(env.account, user_password, db_password)
+    print '\n-- SSH\nUSUÁRIO: {0} \nSENHA: {1} \n\n-- BANCO DE DADOS \nUSUÁRIO: {0} \nSENHA: {2}'.format(env.account, user_password, db_password)
     print '\n================================================================================'
 
 # deleta uma account no servidor
@@ -286,6 +319,22 @@ def upgrade_server():
 def reboot():
     """Reinicia o servidor"""
     sudo('reboot')
+
+# MySQL
+def mysql_restart():
+    """Restart MySQL no servidor"""
+    log('restart MySQL')
+    sudo('/etc/init.d/mysqld restart')
+
+def mysql_start():
+    """start MySQL no servidor"""
+    log('start MySQL')
+    sudo('/etc/init.d/mysqld start')
+
+def mysql_stop():
+    """stop MySQL no servidor"""
+    log('stop MySQL')
+    sudo('/etc/init.d/mysqld stop')
 
 # NGINX
 def nginx_start():
