@@ -98,6 +98,7 @@ def newserver():
 # --------------------------------------------------------
 
 def build():
+    """Instala dependencias no servidor"""
     sudo('yum -y install wget')
 
 def python():
@@ -126,12 +127,14 @@ def python():
         run('ln -s ../lib64/libjpeg.so libjpeg.so')
 
 def nginx():
+    """Instala e configura nginx no servidor"""
     run('yum -y install nginx')
     run('chkconfig --level 2345 nginx on')
     write_file('iptables', '/etc/sysconfig/')
     sudo('/etc/init.d/iptables reload')
 
 def uwsgi():
+    """Instala uwsgi no servidor"""
     run('pip2.7 install uwsgi')
 
 
@@ -328,7 +331,7 @@ def upload_public_key():
     run('echo `cat ~/.ssh/uploaded_key.pub` >> ~/.ssh/authorized_keys && rm -f ~/.ssh/uploaded_key.pub')
 
 def write_file(filename, destination):
-
+    """Função que utiliza o jinja2 para escrever arquivo no servidor"""
     upload_template(
             filename=filename,
             destination=destination,
@@ -351,6 +354,7 @@ def create_password(tamanho=12):
 
 
 def log(message):
+    """Mensagens de acerta dos comandos executados no servidor"""
     print """
 ================================================================================
 %s
