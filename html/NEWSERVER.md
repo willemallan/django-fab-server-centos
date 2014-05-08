@@ -1,7 +1,7 @@
 Utilizando script para Servidor
 =================
 
-<p>Instala e configura todos os pacotes necessários para configurar um servidor com python/django + nginx + supervisor no ubuntu.</p>
+<p>Instala e configura todos os pacotes necessários para configurar um servidor com python/django + nginx + uwsgi no CentOS.</p>
 
 
 Alterar configurações no fabfile.py:
@@ -14,9 +14,13 @@ Configura um novo servidor instalando todos pacotes necessários:
 
     fab newserver
 
-Reiniciar nginx e supervisor
+Atualiza o servidor:
 
-    fab restart
+    fab updateserver
+
+Reiniciar máquinha
+
+    fab reboot
 
 
 <h3>Contas</h3>
@@ -35,7 +39,7 @@ Exclui uma conta no servidor:
 
 <h3>Clonar projeto no servidor</h3>
 
-<p><a href="https://github.com/willemallan/django-fab-server/blob/master/projeto/fabfile.py">fabfile</a> usado no projeto para subir os dados no servidor.</p>
+<p><a href="https://github.com/willemallan/django-fab-server-centos/blob/master/project/fabfile.py">fabfile</a> usado no projeto para subir os dados no servidor.</p>
 
 <p>Estrutura dos projetos - são utilizados 3 domínios media e static separados.</p>
 
@@ -67,7 +71,7 @@ exemplo do settings.py do projeto:
 <p>Antes de clonar precisa configurar o settings do projeto de acordo com os dados que o script gera.</p>
 <p>Quando vai clonar um projeto é importante adicionar a chave do servidor no bitbucket apenas no deploy key do projeto. Assim o servidor só poderá ler os arquivos e nunca poderá escrever, evitando problemas que acontecem do programador arrumar os bugs do servidor e esquecer de dar commit.</p>
 
-Baixar esse <a href="https://github.com/willemallan/django-fab-server/blob/master/projeto/fabfile.py">fabfile</a> para o projeto.
+Baixar esse <a href="https://github.com/willemallan/django-fab-server-centos/blob/master/project/fabfile.py">fabfile</a> para o projeto.
 
 
 Configurar o servidor pela primeira vez (precisa copiar a chave ssh para o repositório do servidor):
@@ -94,8 +98,6 @@ Atualiza o repositório no servidor e reinicia a aplicação do supervisor:
     fab deploy
 
 
-<p>Servidor2 muda para root pois para reiniciar a aplicação precisa ser o root e não o usuário da conta.</p>
-
 Outros comandos
 ================
 
@@ -103,9 +105,9 @@ Reinicie NGINX
 
     fab nginx_restart
 
-Reinicie SUPERVISOR
+Reinicie MYSQL
 
-    fab supervisor_restart
+    fab mysql_restart
 
 
 
