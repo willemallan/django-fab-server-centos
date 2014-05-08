@@ -46,10 +46,6 @@ Configurando uma máquina para rodar python/django e MySQL:
     </li>
 </ul>
 
-
-# Para dar permissão de acesso externo ao mysql altere o arquivo /etc/mysql/my.conf comentando o comando bind 127.0.0.1
-
-
 Listando os comandos:
 
     fab list
