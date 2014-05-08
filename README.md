@@ -60,6 +60,10 @@ Comandos disponíveis:
     dropbase           Deletar banco de dados e usuário no servidor
     log                Mensagens de acerta dos comandos executados no servidor
     login              Acessa o servidor
+    mysql              Instala e configura MySQL
+    mysql_restart      Restart MySQL no servidor
+    mysql_start        start MySQL no servidor
+    mysql_stop         stop MySQL no servidor
     newaccount         Criar uma nova conta do usuário no servidor
     newbase            Criar banco de dados e usuário no servidor
     newserver          Configurar e instalar todos pacotes necessários para servidor
@@ -68,6 +72,7 @@ Comandos disponíveis:
     nginx_restart      Restart nginx no servidor
     nginx_start        Start nginx no servidor
     nginx_stop         Stop nginx no servidor
+    postgresql         Instala e configura Postgresql
     python             Instalando e configurando python
     reboot             Reinicia o servidor
     update_server      Atualizando pacotes no servidor
