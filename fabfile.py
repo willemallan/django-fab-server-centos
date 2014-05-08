@@ -23,8 +23,14 @@ user = 'root'
 host = '192.168.0.119'
 key_filename = '' # caminho da chave nome_arquivo.pem usado na amazon
 
+# pasta aonde clona o projeto
+env.project_dir = 'project'
+
+# pasta do settings do projeto
+env.setting_dir = 'config'
+
 # diretório de downloads
-dir_download = '/usr/local/src/'
+download_dir = '/usr/local/src/'
 
 # diretório do conf.d do supervisor
 env.supervisor_conf_d_path = '/etc/supervisor/conf.d'
@@ -77,6 +83,9 @@ def updateserver():
     if resp == 'y':
         write_file('nginx_server.conf', '/etc/nginx/nginx.conf')
 
+    resp = raw_input('Deseja atualizar o /etc/sysconfig/iptables do servidor? [y/n]: ')
+    if resp == 'y':
+        update_iptables()
 
 def newserver():
 
@@ -117,6 +126,7 @@ def build():
 def mysql():
     """Instala e configura MySQL"""
     log('Instala e configura MySQL')
+    sudo('yum -y install gcc python-devel libxml2-devel libxml++-devel mysql-devel.x86_64')
     sudo('yum -y install mysql-server mysql php-mysql')
     sudo('chkconfig --levels 235 mysqld on')
     sudo('service mysqld start')
@@ -137,7 +147,7 @@ def python():
     """Instalando e configurando python"""
     log('Instalando e configurando python')
 
-    with cd(dir_download):
+    with cd(download_dir):
         run('wget http://dl.fedoraproject.org/pub/epel/6Server/x86_64/epel-release-6-8.noarch.rpm')
         run('rpm -Uvh epel-release*rpm')
         run('yum -y groupinstall \'Development Tools\'')
@@ -162,8 +172,7 @@ def nginx():
     """Instala e configura nginx no servidor"""
     run('yum -y install nginx')
     run('chkconfig --level 2345 nginx on')
-    write_file('iptables', '/etc/sysconfig/')
-    sudo('/etc/init.d/iptables reload')
+    update_iptables()
 
 def uwsgi():
     """Instala uwsgi no servidor"""
@@ -206,6 +215,10 @@ def newaccount():
             run('virtualenv env --no-site-packages')
             write_file('nginx_python.conf', 'nginx.conf')
             write_file('bash_login', '.bash_login')
+            write_file('uwsgi', '.uwsgi')
+            run('chmod +x .uwsgi')
+            run('touch uwsgi_reload')
+            run('source .uwsgi')
         else:
             write_file('nginx_php.conf', 'nginx.conf')
             run('mkdir www')
@@ -359,6 +372,10 @@ def nginx_reload():
     """Reload nginx no servidor"""
     log('reload nginx')
     sudo('/etc/init.d/nginx reload')
+
+def update_iptables():
+    write_file('iptables', '/etc/sysconfig/')
+    run('/etc/init.d/iptables reload')
 
 # --------------------------------------------------------
 # GLOBAL

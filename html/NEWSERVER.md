@@ -84,11 +84,6 @@ Rode o projeto para testar se há alguem erro (depois pode cancelar ctrl+c):
     python project/manage.py runserver 8060
 
 
-Rode o projeto com o gunicorn para testar se ele esta instalado no env e no INSTALLED_APPS:
-
-    python project/manage.py run_gunicorn
-
-
 Sai do servidor:
     exit
 

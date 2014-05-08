@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from fabric.api import *
 
-username = '__USER__'
-host = '192.168.0.1'
-repositorio = 'git@bitbucket.org:__CONTA__/__REPOSITORIO__.git'
+username = 'teste'
+host = '192.168.0.119'
+repositorio = 'git@bitbucket.org:willemarf/d16padrao.git'
 
 # -----------------------------------------------------------------------
 prod_server = '%s@%s' % (username, host)
@@ -22,9 +22,9 @@ def config():
         run('python project/manage.py syncdb')
         run('python project/manage.py migrate')
         run('python project/manage.py collectstatic --noinput')
-    log('RODAR OS DOIS COMANDOS NO SERVIDOR PARA TESTAR SE TEM ALGUM ERRO NO PROJETO! \npython project/manage.py runserver 8060 \npython project/manage.py run_gunicorn')
+    log('RODAR OS DOIS COMANDOS NO SERVIDOR PARA TESTAR SE TEM ALGUM ERRO NO PROJETO! \npython project/manage.py runserver 8060')
     login()
-    log('Executar agora o comando: fab deploy servidor2 restart')
+    log('Executar agora o comando: fab deploy')
 
 def deploy():
     """faz o deploy da aplicação no servidor"""
